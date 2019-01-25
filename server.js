@@ -7,8 +7,10 @@ const db = require("./models");
 const apiLogin = require("./app/api/login");
 const apiEmployee = require("./app/api/employee");
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("app/public"));
 
@@ -30,5 +32,5 @@ db.sequelize.sync().then(() => {
       office: faker.company.bsAdjective()
     }))
   );
-  app.listen(8080, () => console.log("App listening on port 8080!"));
+  app.listen(3000, () => console.log("App listening on port 3000!"));
 });

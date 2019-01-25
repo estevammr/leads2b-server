@@ -1,0 +1,32 @@
+version: "3.5"
+
+services:
+  mysql-db:
+    image: mysql/mysql-server:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: database_development
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    networks:
+      - leads2b-network
+
+  node-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql-db
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    networks:
+      - leads2b-network
+networks:
+  leads2b-network:
+    driver: bridge

@@ -4,6 +4,12 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../config/config.json')[env];
 
 module.exports = (app, db) => {
+  app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+  });
+
   app.post( "/login", (req, res) =>
     db.login.findOne({
       where: {
@@ -15,11 +21,11 @@ module.exports = (app, db) => {
       } else {
         bcrypt.compare(req.body.password, login.password, function (err, result) {
           if (result == true) {
-            var token = jwt.sign(login.toJSON(), config.jwt, {
+            let token = jwt.sign(login.toJSON(), config.jwt, {
               expiresIn: 1440
             });
             res.json({ 
-              data: login,
+              user: login,
               token: token
             });
           } else {
@@ -39,7 +45,7 @@ module.exports = (app, db) => {
   );
 
   app.use(function(req, res, next) {
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    let token = req.body.token || req.query.token || req.headers['x-access-token'];
     
     if (token) {
       jwt.verify(token, config.jwt, function(err, decoded) {      
